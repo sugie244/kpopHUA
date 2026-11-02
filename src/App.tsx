@@ -56,16 +56,19 @@ function App() {
 
         if(!idol) return;
 
+        let interval = 1020;
+
         const intervalId = setInterval(() => {
             if (currentIndex < randomizedRows.length) {
                 const nextRow = randomizedRows[currentIndex];
 
                 setMessages((prev) => [...prev, nextRow]);
                 currentIndex++;
+                interval = interval - 20;
             } else {
                 clearInterval(intervalId);
             }
-        }, 750);
+        }, interval);
 
         return () => clearInterval(intervalId);
     }, [randomizedRows]);
