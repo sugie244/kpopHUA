@@ -9,7 +9,7 @@ import {
     MessageScrollerProvider,
     MessageScrollerViewport,
 } from "@/components/ui/message-scroller"
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 
 
@@ -49,28 +49,28 @@ function App() {
 
     const [messages, setMessages] = useState<Array<{ id: number; original: string; manipulated: string }>>([]);
 
+    const currentIntervalRef = useRef(1000);
+
     useEffect(() => {
-        if (randomizedRows.length === 0) return;
+        if (randomizedRows.length === 0 || !idol) return;
 
         let currentIndex = 0;
+        let timeoutId : NodeJS.Timeout;
 
-        if(!idol) return;
-
-        let interval = 1020;
-
-        const intervalId = setInterval(() => {
+        const runTicker = () => {
             if (currentIndex < randomizedRows.length) {
-                const nextRow = randomizedRows[currentIndex];
-
-                setMessages((prev) => [...prev, nextRow]);
+                setMessages((prev) => [...prev, randomizedRows[currentIndex]]);
                 currentIndex++;
-                interval = interval - 20;
-            } else {
-                clearInterval(intervalId);
-            }
-        }, interval);
 
-        return () => clearInterval(intervalId);
+                currentIntervalRef.current = Math.max(150, currentIntervalRef.current - 25);
+
+                timeoutId = setTimeout(runTicker, currentIntervalRef.current);
+            }
+        };
+
+        timeoutId = setTimeout(runTicker, currentIntervalRef.current);
+
+        return () => clearTimeout(timeoutId);
     }, [randomizedRows]);
 
     const [idol, setIdol] = useState<string | null>(null);
