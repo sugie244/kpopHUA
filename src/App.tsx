@@ -65,7 +65,7 @@ function App() {
             } else {
                 clearInterval(intervalId);
             }
-        }, 1000);
+        }, 750);
 
         return () => clearInterval(intervalId);
     }, [randomizedRows]);

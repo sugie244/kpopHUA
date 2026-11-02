@@ -8,7 +8,7 @@ const useReadCSV = () => {
     const [values, setValues] = React.useState<ParseResult<CSVRow> | undefined>();
 
     const getCSV = () => {
-        Papa.parse("/etumeFan.csv", {
+        Papa.parse(`${import.meta.env.BASE_URL}etumeFan.csv`, {
             header: false,
             download: true,
             skipEmptyLines: true,
