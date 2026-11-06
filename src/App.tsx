@@ -10,29 +10,63 @@ import {
     MessageScrollerViewport,
 } from "@/components/ui/message-scroller"
 import {useEffect, useRef, useState} from "react";
+import { Button } from "@/components/ui/button"
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Field, FieldGroup } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
 
 
 
 function App() {
 
+    const [showSetup, setShowSetup] = useState(true);
+
     const csvData = useReadCSV();
-    const NAME = "yara";
-    const PLATFORM = "Bubble";
-    const SONG = "Bees";
-    const GROUP = "82major";
-    const PET = "binnie";
-    const SIBLING = "omar";
+    const [profile, setProfile] = useState({
+        name: "yara",
+        group: "82major",
+        pet: "binnie",
+        platform: "Bubble",
+        song: "Bees",
+        sibling: "omar",
+    });
+    const handleProfileSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+
+        setProfile({
+            name: (formData.get("name") as string) || "yara",
+            group: (formData.get("group") as string) || "82major",
+            pet: (formData.get("pet") as string) || "binnie",
+            platform: (formData.get("platform") as string) || "Bubble",
+            song: (formData.get("song") as string) || "Bees",
+            sibling: (formData.get("sibling") as string) || "omar",
+        });
+
+        setShowSetup(false);
+    };
 
     const processedRows = csvData?.data.map((row, index) => {
         const rawText = row[0] ?? "";
 
         const customParsed = rawText
-            .replace(/PETSNAME/g, PET)
-            .replace(/NAME/g, NAME)
-            .replace(/PLATFORM/g, PLATFORM)
-            .replace(/SONG/g, SONG)
-            .replace(/GROUP/g, GROUP)
-            .replace(/SIBLING/g, SIBLING);
+            .replace(/PETSNAME/g, profile.pet)
+            .replace(/NAME/g, profile.name)
+            .replace(/PLATFORM/g, profile.platform)
+            .replace(/SONG/g, profile.song)
+            .replace(/GROUP/g, profile.group)
+            .replace(/SIBLING/g, profile.sibling);
 
         return {
             id: index,
@@ -92,12 +126,54 @@ function App() {
       <>
           <div className="flex h-screen w-full items-center justify-center bg-[#ECF8F4]">
               <div className="flex h-full w-120 bg-white flex-col">
+
+                  <Dialog open={showSetup}>
+                      <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+                          <form onSubmit={handleProfileSubmit}>
+                              <DialogHeader>
+                                  <DialogTitle>Welcome! Set up your profile</DialogTitle>
+                                  <DialogDescription>
+                                      Enter your preferences before starting the chat.
+                                  </DialogDescription>
+                              </DialogHeader>
+                              <FieldGroup>
+                                  <Field>
+                                      <Label htmlFor="name-1">Name</Label>
+                                      <Input id="name-1" name="name" defaultValue={profile.name} required />
+                                  </Field>
+                                  <Field>
+                                      <Label htmlFor="group-1">Group</Label>
+                                      <Input id="group-1" name="group" defaultValue={profile.group} required />
+                                  </Field>
+                                  <Field>
+                                      <Label htmlFor="pet-1">Pet's Name</Label>
+                                      <Input id="pet-1" name="pet" defaultValue={profile.pet} required />
+                                  </Field>
+                                  <Field>
+                                      <Label htmlFor="platform-1">Platform</Label>
+                                      <Input id="platform-1" name="platform" defaultValue={profile.platform} required />
+                                  </Field>
+                                  <Field>
+                                      <Label htmlFor="song-1">Song</Label>
+                                      <Input id="song-1" name="song" defaultValue={profile.song} required />
+                                  </Field>
+                                  <Field>
+                                      <Label htmlFor="sibling-1">Sibling</Label>
+                                      <Input id="sibling-1" name="sibling" defaultValue={profile.sibling} required />
+                                  </Field>
+                              </FieldGroup>
+                              <DialogFooter className="mt-4">
+                                  <Button type="submit">Start Chat</Button>
+                              </DialogFooter>
+                          </form>
+                      </DialogContent>
+                  </Dialog>
+
                   <div className="h-1/12 items-center bg-[#C1E8DC] flex justify-center relative px-4">
                       <div>
-                          {NAME}'s Fans :D
+                          {profile.name}'s Fans :D
                       </div>
                       <div className="absolute right-4">
-                          Settings
                       </div>
                   </div>
 
